@@ -1,0 +1,65 @@
+alexnet：要训练的网络模型
+
+binaryconnect.py：参考文献【11】中的实现方案vgg\wideresnet。构造了二值化网络的类。为二值化网络定义了一些功能，使得网络每轮前向的时候，都将网络参数二值化
+      几个函数：
+      save_params：保存全精度参数
+      binarization：二值化所有参数
+      restore：在网络梯度回传之后，将二值化的参数替换回原全精度参数
+
+binaryconnect_clipqua.py：我的基于filters而二值化改进
+      几个函数：
+      comp_clip_power：对每个filters中参数求绝对值的均值，进而确定整个filter中所有参数举例哪个2的幂值最近，返回指数。
+      bin_tensor：根据一个卷积层的weight的tensor中所有filters对应的指数（2的幂值）的list，将各个filters量化为2的幂值。
+
+      comp_power_array：计算网络各层的tensor 的 幂值的指数的list，形成一个二维数组。
+      binarization：将网络中参数，基于filters进行二值化。
+
+      save_params：保存全精度参数
+      restore：在网络梯度回传之后，将二值化的参数替换回原全精度参数
+
+
+train_binary_clip.py： 训练，基于filters的二值化网络
+      几个函数：
+      train：训练一个全精度网络
+      train_pp：训练一个基于filters二值化网络
+
+
+train_alex.py： 【11】github开源的训练算法
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#策略 ，连续、挑选几片？
+#########因为是要拟合原模型，所以应该根据clip的相似性，来选择哪些clips被量化为相似的中心？
+########
+#
+#策略，不同中心的clips，同时量化吗？还是per clip轮流？
+#因为确定了每个clip的聚类中心、量化中心，所以为了避免retrain过程中各个clip的变化，导致量化中心的变化，所以同一中心的clips应同时量化？、retrain？甚至所有clips，同一层，应该同时qua、train？
+
+
+
+# 参考aaai2018, 我们可以，固定一部分？根据量化误差？
